@@ -2,8 +2,8 @@ import picamera
 import pathlib
 
 # Voreinstellungen
-width=320
-height=240
+width=1024
+height=768
 
 # Kamera initialisieren
 camera = picamera.PiCamera()
