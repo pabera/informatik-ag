@@ -56,7 +56,7 @@
 ## Erstes Bild erstellen
 
 1. In den neuen Ordner wechseln
-    * `cd informatig-ag`
+    * `cd informatik-ag`
     * `cd vogelhaus`
 1. Script ausführen
     * `python3 foto-aufnehmen.py`
