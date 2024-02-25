@@ -50,7 +50,7 @@
     1. Als nächstes wirst du nach deinem Passwort gefragt
 1. Wenn du eingeloggt bist, installieren wir die Vogel-Kamera Software
 1. Software installieren
-    1. Befehl eingeben: `sudo apt-get install -y git python3 python3-dev`
+    1. Befehl eingeben: `sudo apt-get install -y git python3 python3-dev python3-pip`
     1. Befehl eingeben: `git clone https://github.com/pabera/informatik-ag.git`
 
 ## Erstes Bild erstellen
