@@ -51,13 +51,15 @@
 1. Wenn du eingeloggt bist, installieren wir die Vogel-Kamera Software
 1. Software installieren
     1. Befehl eingeben: `sudo apt-get install -y git python3 python3-dev python3-pip`
-    1. Befehl eingeben: `git clone https://github.com/pabera/informatik-ag.git`
+    1. Befehl eingeben: `git clone https://github.com/pabera/informatik-ag.git
 
 ## Erstes Bild erstellen
 
 1. In den neuen Ordner wechseln
     * `cd informatik-ag`
     * `cd vogelhaus`
+1. Abhängigkeiten (*Dependencies*) installieren
+    * Script ausführen: `pip install -r requirements.txt`
 1. Script ausführen
     * `python3 foto-aufnehmen.py`
 1. Um das Foto anzusehen, folgende Befehle ausführen
