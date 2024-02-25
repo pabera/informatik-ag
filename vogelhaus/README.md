@@ -64,6 +64,6 @@
     * `python3 foto-aufnehmen.py`
 1. Um das Foto anzusehen, folgende Befehle ausführen
     1. Startet einen Web-Server auf dem Raspberry Pi
-        * `python3 -m http.server -b 80`
+        * `python3 -m http.server`
     1. Auf eurem Computer, öffnet folgenden Web-Adresse in einem Browser (Denke daran, das X mit der Zahl zu ersetzen)
-        * `http://vogelcamX.local/camera.jpg`
+        * `http://vogelcamX.local:8000/camera.jpg`
