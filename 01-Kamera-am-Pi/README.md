@@ -1,4 +1,4 @@
-# Nistkasten mit Kamera
+# Bilder mit der Kamera auf einem Raspberry Pi aufnehmen
 
 ## Raspberry Pi vorbereiten
 
@@ -57,7 +57,7 @@
 
 1. In den neuen Ordner wechseln
     * `cd informatik-ag`
-    * `cd vogelhaus`
+    * `cd 01-Kamera-am-Pi`
 1. Abhängigkeiten (*Dependencies*) installieren
     * Script ausführen: `pip install -r requirements.txt`
 1. Script ausführen
