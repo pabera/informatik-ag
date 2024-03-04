@@ -1,15 +1,14 @@
 import picamera
 import time
-import shutil
 import os
 import boto3
 
 # AWS-Zugangsdaten direkt im Skript (nicht empfohlen für den Produktiveinsatz!)
 aws_access_key_id = 'DEIN_ACCESS_KEY'
 aws_secret_access_key = 'DEIN_SECRET_KEY'
-region_name='eu-central-1'
+region_name = 'eu-central-1'
 # S3 Bucket-Details
-bucket_name='DEIN_BUCKET_NAME'
+bucket_name = 'DEIN_BUCKET_NAME'
 
 # Initialisiere einen boto3-Client mit expliziten AWS-Zugangsdaten
 s3 = boto3.client(
@@ -37,7 +36,7 @@ def upload_to_s3(file_path, bucket_name, object_name=None):
         print(f"Fehler beim Hochladen nach S3: {e}")
 
 # Name des Ordners, in den die Bilder gespeichert werden
-output_dir = "output"
+output_dir = "tmp_output"
 
 # Überprüfe, ob der Ordner existiert, wenn nicht, wird er erstellt
 if not os.path.exists(output_dir):
@@ -58,12 +57,10 @@ try:
             filename = os.path.join(output_dir, prefix + '-' + time.strftime("%Y%m%d-%H%M%S") + '.jpg')
             camera.capture(filename)
 
-            vogelcam_path = os.path.join(output_dir, prefix + '.jpg')
-            shutil.copyfile(filename, vogelcam_path)
-
-            # Fotos auf S3 hochladen
+            # Das aktuellste Foto zweimal auf S3 hochladen, einmal mit dem Originalnamen
             upload_to_s3(filename, bucket_name)
-            upload_to_s3(vogelcam_path, bucket_name)
+            # Und einmal als vogelcam.jpg
+            upload_to_s3(filename, bucket_name, object_name=prefix + '.jpg')
         except Exception as e:
             print(f"Ein Fehler ist aufgetreten: {e}")
 
