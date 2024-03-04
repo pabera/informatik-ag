@@ -1,2 +1,2 @@
-Flask
+boto3
 picamera
