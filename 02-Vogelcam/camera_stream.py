@@ -1,49 +1,34 @@
-from flask import Flask, Response
 import picamera
-import threading
-from io import BytesIO
+import time
+import shutil
 
-# Initialize Flask
-app = Flask(__name__)
+# Pi Kamera initialisieren
+camera = picamera.PiCamera()
 
-# Camera settings
-frame = None
-lock = threading.Lock()
+try:
+    while True:
+        # Foto Auflösung
+        camera.resolution = (1024, 768)
 
-def capture_frames():
-    global frame, lock
-    with picamera.PiCamera() as camera:
-        # Camera warm-up time
-        camera.resolution = (640, 480)
-        stream = BytesIO()
-        for _ in camera.capture_continuous(stream, 'jpeg', use_video_port=True):
-            stream.seek(0)
-            with lock:
-                frame = stream.read()
-            stream.seek(0)
-            stream.truncate()
+        # Optional: Wenn die Kamera nicht hell genug ist, kann man den ISO Wert anpassen
+        # camera.iso = 800
 
-@app.route('/video_stream')
-def video_stream():
-    """Route to stream video."""
-    def generate():
-        global frame, lock
-        while True:
-            with lock:
-                if frame:
-                    yield (b'--frame\r\n'
-                           b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-    return Response(generate(), mimetype='multipart/x-mixed-replace; boundary=frame')
+        # Erlaube der Kamera sich an die Lichtverhältnisse anzupassen
+        time.sleep(2)
 
-@app.route('/')
-def index():
-    """Video streaming home page."""
-    return Response('<html><body><img src="/video_stream"></body></html>')
+        try:
+            # Foto aufnehmen mit aktuellem Zeitstempel
+            filename = time.strftime("%Y%m%d-%H%M%S") + '.jpg'
+            camera.capture(filename)
+            # print(f"Photo taken and saved as {filename}")
 
-if __name__ == '__main__':
-    # Start the frame capture thread
-    t = threading.Thread(target=capture_frames)
-    t.start()
+            # Dupliziere das Bild als `vogalcam.jpg`
+            shutil.copyfile(filename, 'vogalcam.jpg')
+        except Exception as e:
+            print(f"Es is ein Fehler aufgetreten: {e}")
 
-    # Start Flask app
-    app.run(host='0.0.0.0', port=5000, debug=True, threaded=True)
+        # Warte
+        time.sleep(5)
+finally:
+    # Wenn das Programm beendet wird, soll die Kamera korrekt beendet werden
+    camera.close()
