@@ -18,6 +18,7 @@ _kiosk_mode_install_os_dependencies() {
   echo "Install Kiosk Mode dependencies"
   # Resource:
   # https://blog.r0b.io/post/minimal-rpi-kiosk/
+  sudo apt-get update && sudo apt-get upgrade -y
   sudo apt-get -qq -y install --no-install-recommends \
     xserver-xorg \
     x11-xserver-utils \
@@ -32,7 +33,7 @@ _kiosk_mode_set_autostart() {
   local _DISPLAY='$DISPLAY'
   local _XDG_VTNR='$XDG_VTNR'
 
-  tee -a "${KIOSK_MODE_BASHRC}" <<-EOF
+  sudo tee -a "${KIOSK_MODE_BASHRC}" <<-EOF
 
 ${KIOSK_MODE_CONF_HEADER}
 [[ -z $_DISPLAY && $_XDG_VTNR -eq 1 ]] && startx -- -nocursor
