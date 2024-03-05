@@ -1,0 +1,5 @@
+aws:
+  access_key_id: DEIN_ACCESS_KEY
+  secret_access_key: DEIN_SECRET_KEY
+  region_name: eu-central-1
+bucket_name: DEIN_BUCKET_NAME

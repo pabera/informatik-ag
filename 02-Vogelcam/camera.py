@@ -2,13 +2,18 @@ import picamera
 import time
 import os
 import boto3
+import yaml
+
+# Konfigurationsdatei einlesen
+with open('config.yml', 'r') as file:
+    config = yaml.safe_load(file)
 
 # AWS-Zugangsdaten direkt im Skript (nicht empfohlen für den Produktiveinsatz!)
-aws_access_key_id = 'DEIN_ACCESS_KEY'
-aws_secret_access_key = 'DEIN_SECRET_KEY'
-region_name = 'eu-central-1'
+aws_access_key_id = config['aws']['access_key_id']
+aws_secret_access_key = config['aws']['secret_access_key']
+region_name = config['aws']['region_name']
 # S3 Bucket-Details
-bucket_name = 'DEIN_BUCKET_NAME'
+bucket_name = config['bucket_name']
 
 # Initialisiere einen boto3-Client mit expliziten AWS-Zugangsdaten
 s3 = boto3.client(
