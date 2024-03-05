@@ -60,17 +60,13 @@ try:
         time.sleep(2)  # Erlaube der Kamera, sich an die Lichtverhältnisse anzupassen
 
         try:
-            filename = os.path.join(output_dir, prefix + '-' + time.strftime("%Y%m%d-%H%M%S") + '.jpg')
+            filename = os.path.join(output_dir, prefix + '.jpg')
             camera.capture(filename)
 
-            # Das aktuellste Foto zweimal auf S3 hochladen, einmal mit dem Originalnamen
-            upload_to_s3(filename, bucket_name)
+            # Das aktuellste Foto zweimal auf S3 hochladen, einmal mit einem Timestamp Namen
+            upload_to_s3(filename, bucket_name, object_name=prefix + '-' + time.strftime("%Y%m%d-%H%M%S") + '.jpg')
             # Und einmal als vogelcam.jpg
-            upload_to_s3(filename, bucket_name, object_name=prefix + '.jpg')
-
-            # Datei wird lokal wieder gelöscht, damit der Speicher nicht vollläuft
-            os.remove(filename)
-
+            upload_to_s3(filename, bucket_name)
         except Exception as e:
             print(f"Ein Fehler ist aufgetreten: {e}")
 
