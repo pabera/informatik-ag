@@ -66,6 +66,10 @@ try:
             upload_to_s3(filename, bucket_name)
             # Und einmal als vogelcam.jpg
             upload_to_s3(filename, bucket_name, object_name=prefix + '.jpg')
+
+            # Datei wird lokal wieder gelöscht, damit der Speicher nicht vollläuft
+            os.remove(filename)
+
         except Exception as e:
             print(f"Ein Fehler ist aufgetreten: {e}")
 
