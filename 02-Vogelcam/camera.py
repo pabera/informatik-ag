@@ -49,6 +49,7 @@ if not os.path.exists(output_dir):
 
 # Pi Kamera initialisieren
 camera = picamera.PiCamera()
+camera.resolution = (1280, 854)
 # Intervall in Sekunden, sollte 3 Sek nicht unterschreiten
 interval = 5
 # Präfix der Foto Dateien
