@@ -8,16 +8,14 @@ fi
 
 url="$1"
 
-KIOSK_MODE_CONF_HEADER="## Kiosk Mode"
+KIOSK_MODE_CONF_HEADER="## Kiosk Mode ##"
 KIOSK_MODE_XINITRC='/etc/xdg/openbox/autostart'
-KIOSK_MODE_BASHRC="${HOME_PATH}/.bashrc"
+KIOSK_MODE_BASHRC="${HOME}/.bashrc"
 KIOSK_MODE_CHROMIUM_CUSTOM_DISABLE_UPDATE_CHECK='/etc/chromium-browser/customizations/01-disable-update-check'
 KIOSK_MODE_CHROMIUM_FLAG_UPDATE_INTERVAL='--check-for-update-interval=31536000'
 
 _kiosk_mode_install_os_dependencies() {
   echo "Install Kiosk Mode dependencies"
-  # Resource:
-  # https://blog.r0b.io/post/minimal-rpi-kiosk/
   sudo apt-get update && sudo apt-get upgrade -y
   sudo apt-get -qq -y install --no-install-recommends \
     xserver-xorg \
@@ -33,7 +31,7 @@ _kiosk_mode_set_autostart() {
   local _DISPLAY='$DISPLAY'
   local _XDG_VTNR='$XDG_VTNR'
 
-  sudo tee -a "${KIOSK_MODE_BASHRC}" <<-EOF
+  tee -a "${KIOSK_MODE_BASHRC}" <<-EOF
 
 ${KIOSK_MODE_CONF_HEADER}
 [[ -z $_DISPLAY && $_XDG_VTNR -eq 1 ]] && startx -- -nocursor
@@ -60,10 +58,16 @@ chromium-browser ${url} \
   --no-first-run
 
 EOF
+
+    # Autologin
+    sudo raspi-config nonint do_boot_behaviour B2
+    # Wait for network at boot
+    sudo raspi-config nonint do_boot_wait 1
+    # power management of wifi: switch off to avoid disconnecting
+    sudo iwconfig wlan0 power off
 }
 
 _kiosk_mode_update_settings() {
-  # Resource: https://github.com/Thyraz/Sonos-Kids-Controller/blob/d1f061f4662c54ae9b8dc8b545f9c3ba39f670eb/README.md#kiosk-mode-installation
   sudo mkdir -p $(dirname "${KIOSK_MODE_CHROMIUM_CUSTOM_DISABLE_UPDATE_CHECK}")
   sudo rm -f "${KIOSK_MODE_CHROMIUM_CUSTOM_DISABLE_UPDATE_CHECK}"
   sudo tee -a "${KIOSK_MODE_CHROMIUM_CUSTOM_DISABLE_UPDATE_CHECK}" <<-EOF
