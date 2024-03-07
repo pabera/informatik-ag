@@ -4,6 +4,10 @@ import os
 import boto3
 import yaml
 
+# Setze Verzeichnis des Script als Arbeitsverzeichnis
+script_dir = os.path.dirname(os.path.abspath(__file__))
+os.chdir(script_dir)
+
 # Konfigurationsdatei einlesen
 with open('config.yml', 'r') as file:
     config = yaml.safe_load(file)
@@ -13,7 +17,13 @@ aws_access_key_id = config['aws']['access_key_id']
 aws_secret_access_key = config['aws']['secret_access_key']
 region_name = config['aws']['region_name']
 # S3 Bucket-Details
-bucket_name = config['bucket_name']
+bucket_name = config['aws']['bucket_name']
+# Kamera Einstellungen
+resolution_x = config['camera']['resolution']['x']
+resolution_y = config['camera']['resolution']['y']
+interval = config['camera']['interval']
+prefix = config['camera']['prefix']                 # Präfix der Foto Dateien
+output_dir = config['camera']['output_dir']         # Name des Ordners, in den die Bilder gespeichert werden
 
 # Initialisiere einen boto3-Client mit expliziten AWS-Zugangsdaten
 s3 = boto3.client(
@@ -40,20 +50,13 @@ def upload_to_s3(file_path, bucket_name, object_name=None):
     except Exception as e:
         print(f"Fehler beim Hochladen nach S3: {e}")
 
-# Name des Ordners, in den die Bilder gespeichert werden
-output_dir = "tmp_output"
-
 # Überprüfe, ob der Ordner existiert, wenn nicht, wird er erstellt
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
 # Pi Kamera initialisieren
 camera = picamera.PiCamera()
-camera.resolution = (1280, 854)
-# Intervall in Sekunden, sollte 3 Sek nicht unterschreiten
-interval = 5
-# Präfix der Foto Dateien
-prefix = 'vogelcam'
+camera.resolution = (resolution_x, resolution_y)
 
 try:
     while True:
