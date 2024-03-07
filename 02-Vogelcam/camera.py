@@ -9,7 +9,7 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(script_dir)
 
 # Konfigurationsdatei einlesen
-with open('config.yml', 'r') as file:
+with open('../config.yml', 'r') as file:
     config = yaml.safe_load(file)
 
 # AWS-Zugangsdaten direkt im Skript (nicht empfohlen für den Produktiveinsatz!)
