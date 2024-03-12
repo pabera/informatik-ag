@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="5">
+    <!-- Lade die Website aller 10 Minuten neu, um den Cache zu löschen -->
+    <meta http-equiv="refresh" content="600">
     <title>Vogelcam</title>
     <style>
         body, html {
@@ -12,15 +13,59 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-flow: column;
+        }
+        h1 {
+            color: white;
+            font-family: sans-serif;
         }
         img {
-            /* Optional: Ensure the image does not exceed the viewport dimensions */
             max-height: 100%;
             max-width: 100%;
         }
     </style>
 </head>
 <body>
-    <img src="https://gs-mehring-vogelcam.s3.eu-central-1.amazonaws.com/vogelcam.jpg" alt="Refreshing Image" />
+    <h1 id="dynamicHeadline"></h1>
+    <img id="refreshingImage" src="https://gs-mehring-vogelcam.s3.eu-central-1.amazonaws.com/vogelcam.jpg" alt="Vogelcam" />
+    <script>
+        function refreshImage() {
+            const imageElement = document.getElementById('refreshingImage');
+            let imageUrl = imageElement.src;
+
+            // Entferne jeglichen existierenden Cache-Busting-Query-String, bevor ein neuer hinzugefügt wird
+            const url = new URL(imageUrl);
+            // Füge den 'random' Parameter hinzu oder aktualisiere ihn, um Caching zu verhindern
+            url.searchParams.set('random', new Date().getTime());
+
+            // Erstelle ein neues Bild und setze seine Quelle auf die aktualisierte URL
+            const newImage = new Image();
+            newImage.src = url.href;
+
+            // Sobald das neue Bild vollständig geladen ist, ersetze das alte Bild
+            newImage.onload = function() {
+                imageElement.src = this.src;
+            };
+        }
+
+        function updateHeadline() {
+            const headline = document.getElementById('dynamicHeadline');
+            const hours = new Date().getHours();
+
+            if (hours < 10) {
+                headline.innerText = "Guten Morgen, Kinder!";
+            } else if (hours >= 10 && hours < 12) {
+                headline.innerText = "Noch keine Vögel da?";
+            } else {
+                headline.innerText = "Tschüss, bis morgen!";
+            }
+        }
+
+        // Check time and update headline every minute
+        updateHeadline();
+        setInterval(updateHeadline, 60000);
+        // Aktualisiere das Bild in einem gewünschten Interval
+        setInterval(refreshImage, 5000);
+    </script>
 </body>
 </html>

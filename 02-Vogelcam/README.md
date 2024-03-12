@@ -45,7 +45,7 @@
 ## Optional: WLAN Password ändern
 
 ```bash
-sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
+sudo nano /bootfs/wpa_supplicant.conf
 ```
 
 ```bash
