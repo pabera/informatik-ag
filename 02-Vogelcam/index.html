@@ -22,6 +22,7 @@
         img {
             max-height: 100%;
             max-width: 100%;
+            border-radius: 20px;
         }
     </style>
 </head>
@@ -50,14 +51,20 @@
 
         function updateHeadline() {
             const headline = document.getElementById('dynamicHeadline');
-            const hours = new Date().getHours();
+            const now = new Date();
+            const hours = now.getHours();
+            const dayOfWeek = now.getDay();
 
-            if (hours < 10) {
+            if (hours < 9) {
                 headline.innerText = "Guten Morgen, Kinder!";
-            } else if (hours >= 10 && hours < 12) {
-                headline.innerText = "Noch keine Vögel da?";
+            } else if (hours >= 9 && hours < 12) {
+                headline.innerText = "Sieht so aus, als würde da jemand einziehen!";
             } else {
-                headline.innerText = "Tschüss, bis morgen!";
+                if (dayOfWeek === 5 && hours >= 12) {
+                    headline.innerText = "Schönes Wochenende!";
+                } else {
+                    headline.innerText = "Tschüss, bis morgen!";
+                }
             }
         }
 
