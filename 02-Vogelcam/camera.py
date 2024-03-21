@@ -46,7 +46,6 @@ def upload_to_s3(file_path, bucket_name, object_name=None):
 
     try:
         response = s3.upload_file(file_path, bucket_name, object_name)
-        # print(f"Hochgeladen {file_path} nach s3://{bucket_name}/{object_name}")
     except Exception as e:
         print(f"Fehler beim Hochladen nach S3: {e}")
 
@@ -57,12 +56,13 @@ if not os.path.exists(output_dir):
 # Pi Kamera initialisieren
 camera = picamera.PiCamera()
 camera.resolution = (resolution_x, resolution_y)
+time.sleep(2)  # Erlaube der Kamera, sich an die Lichtverhältnisse anzupassen
 
 try:
     while True:
-        time.sleep(2)  # Erlaube der Kamera, sich an die Lichtverhältnisse anzupassen
-
         try:
+            start_time = time.time()
+
             filename = os.path.join(output_dir, prefix + '.jpg')
             camera.capture(filename)
 
@@ -70,9 +70,14 @@ try:
             upload_to_s3(filename, bucket_name, object_name=prefix + '-' + time.strftime("%Y%m%d-%H%M%S") + '.jpg')
             # Und einmal als vogelcam.jpg
             upload_to_s3(filename, bucket_name)
+
+            # Berechnung der verstrichenen Zeit und Anpassung des Wartintervals
+            elapsed_time = time.time() - start_time
+            adjusted_sleep = max(0, interval - elapsed_time)
+            time.sleep(adjusted_sleep)
+
         except Exception as e:
             print(f"Ein Fehler ist aufgetreten: {e}")
 
-        time.sleep(interval)
 finally:
     camera.close()
