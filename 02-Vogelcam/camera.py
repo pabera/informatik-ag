@@ -1,6 +1,8 @@
-import picamera
 import time
 import os
+import concurrent.futures
+
+import picamera
 import boto3
 import yaml
 
@@ -56,28 +58,37 @@ if not os.path.exists(output_dir):
 # Pi Kamera initialisieren
 camera = picamera.PiCamera()
 camera.resolution = (resolution_x, resolution_y)
-time.sleep(2)  # Erlaube der Kamera, sich an die Lichtverhältnisse anzupassen
 
 try:
-    while True:
-        try:
+    # Erlaube der Kamera, sich an die Lichtverhältnisse anzupassen
+    time.sleep(2)
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+        while True:
             start_time = time.time()
 
             filename = os.path.join(output_dir, prefix + '.jpg')
             camera.capture(filename)
 
-            # Das aktuellste Foto zweimal auf S3 hochladen, einmal mit einem Timestamp Namen
-            upload_to_s3(filename, bucket_name, object_name=prefix + '-' + time.strftime("%Y%m%d-%H%M%S") + '.jpg')
-            # Und einmal als vogelcam.jpg
-            upload_to_s3(filename, bucket_name)
+            # Definiere den Pfad für den Upload
+            folder = time.strftime("%Y%m%d")
+            timestamp = time.strftime("%Y%m%d-%H%M%S")
 
-            # Berechnung der verstrichenen Zeit und Anpassung des Wartintervals
+            # Führe die Uploads parallel aus
+            futures = [
+                executor.submit(upload_to_s3, filename, bucket_name, object_name=f'raw/{folder}/{prefix}-{timestamp}.jpg'),
+                executor.submit(upload_to_s3, filename, bucket_name, object_name=f'{prefix}.jpg')
+            ]
+
+            # Warten wir trotzdem darauf, dass die Bilder hochgeladen sind.
+            # Sonst könnte es zu einem "Upload-Stau kommen" wenn der ganze
+            # Prozess länger als `interval` dauert
+            concurrent.futures.wait(futures)
+
+            # Berechne die verstrichene Zeit und passe das Intervall an
             elapsed_time = time.time() - start_time
             adjusted_sleep = max(0, interval - elapsed_time)
             time.sleep(adjusted_sleep)
-
-        except Exception as e:
-            print(f"Ein Fehler ist aufgetreten: {e}")
 
 finally:
     camera.close()
