@@ -7,4 +7,4 @@
 
 ## Fotogalerie
 
-* [Bilder 2024](https://shorturl.at/X2AEn)
+* [Bilder 2024](https://shorturl.at/bLJCI)
