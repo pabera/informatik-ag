@@ -27,6 +27,12 @@
     touch game.py
     ```
 
+1. Öffnet die Datei `game.py` im Editor (`open` öffnet eine Datei).
+
+    ```bash
+    open game.py
+    ```
+
 1. Öffnet in eurem Editor die kürzlich erstellte Datei und schreibt den folgenden Code hinein. 💾 Speichert die Datei mit der Tastenkombination `command + s`. Merkt euch diese Tastenkombination, wir werden sie jetzt öfter brauchen.
 
     ```python
